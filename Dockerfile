@@ -4,7 +4,6 @@ ENV GIT_SHA=${GIT_SHA}
 WORKDIR /usr/src/app
 COPY Cargo.toml Cargo.lock ./
 COPY src ./src
-RUN cargo test
 RUN cargo install --path .
 
 # Bundle Stage
