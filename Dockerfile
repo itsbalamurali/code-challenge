@@ -1,4 +1,6 @@
 FROM rust:latest AS builder
+ARG GIT_SHA
+ENV GIT_SHA=${GIT_SHA}
 WORKDIR /usr/src/app
 COPY Cargo.toml Cargo.lock ./
 COPY src ./src
