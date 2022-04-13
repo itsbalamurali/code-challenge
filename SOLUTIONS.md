@@ -6,7 +6,7 @@ Noticed Issues:
 - Service target port mapping is incorrect.
 - Select label mapping is incorrect.
 
-Fix manifests:
+Fixed manifests:
 
 `deployment.yaml`
 
