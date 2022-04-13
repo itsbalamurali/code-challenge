@@ -30,6 +30,17 @@ jobs:
       run: helm lint
       working-directory: "helm/code-challenge"
 
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+    
+    - name: Run Terraform Format Check 
+      run: terraform fmt -check
+      working-directory: "deploy"
+    
+    - name: Run Terraform Validate
+      run: terraform validate
+      working-directory: "deploy"
+
   build:
     name: Build
     needs: test
@@ -68,6 +79,9 @@ jobs:
           chmod +x kind
           sudo mv kind /usr/local/bin/
 
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
     - name: Create Kubernetes Cluster
       run: kind create cluster
     
@@ -79,6 +93,12 @@ jobs:
 
     - name: Install Helm
       uses: azure/setup-helm@v1
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Plan
+      run: terraform plan
 
     - name: Deploy Production Helm Chart
       if: github.ref == 'refs/heads/main'
