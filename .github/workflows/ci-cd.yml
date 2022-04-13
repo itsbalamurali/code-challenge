@@ -22,7 +22,7 @@ jobs:
       uses: Swatinem/rust-cache@v1
 
     - name: Run Cargo Test
-      run: cargo test
+      run: make test
       env:
         GIT_SHA: ${{ github.sha }}
 
@@ -35,6 +35,7 @@ jobs:
 
     - name: Terraform Init
       run: terraform init
+      working-directory: "deploy"
     
     - name: Run Terraform Format Check 
       run: terraform fmt -check
@@ -99,9 +100,11 @@ jobs:
 
     - name: Terraform Init
       run: terraform init
+      working-directory: "deploy"
 
     - name: Terraform Plan
       run: terraform plan
+      working-directory: "deploy"
 
     - name: Deploy Production Helm Chart
       if: github.ref == 'refs/heads/main'
