@@ -26,6 +26,10 @@ jobs:
       env:
         GIT_SHA: ${{ github.sha }}
 
+    - name: Run Helm Lint
+      run: helm lint
+      working-directory: "helm/code-challenge"
+
   build:
     name: Build
     needs: test
@@ -45,5 +49,38 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: ghcr.io/itsbalamurali/code-challenge:${{ github.sha }}
+        tags: |
+          ghcr.io/itsbalamurali/code-challenge:${{ github.sha }}
+          ghcr.io/itsbalamurali/code-challenge:latest
         build-args: GIT_SHA=${{ github.sha }}
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Install Kind
+      run: |
+          curl -Lo kind https://github.com/kubernetes-sigs/kind/releases/download/v0.11.1/kind-linux-amd64
+          chmod +x kind
+          sudo mv kind /usr/local/bin/
+
+    - name: Create Kubernetes Cluster
+      run: kind create cluster
+    
+    - name: Get Cluster Info
+      run: kubectl cluster-info
+
+    - name: Set up Kubectl
+      uses: azure/setup-kubectl@v2.1
+
+    - name: Install Helm
+      uses: azure/setup-helm@v1
+
+    - name: Deploy Production Helm Chart
+      if: github.ref == 'refs/heads/main'
+      run: helm upgrade --install code-challenge . --set image.tag=${{ github.sha }}
+      working-directory: "helm/code-challenge"
