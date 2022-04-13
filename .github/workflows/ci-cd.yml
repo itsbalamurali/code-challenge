@@ -103,7 +103,7 @@ jobs:
       working-directory: "deploy"
 
     - name: Terraform Plan
-      run: terraform plan
+      run: terraform plan -var="docker_image_tag=${{ github.sha }}"
       working-directory: "deploy"
 
     - name: Deploy Production Helm Chart
