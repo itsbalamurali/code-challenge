@@ -1,3 +1,50 @@
-fn main() {
-    println!("Hello, world!");
+use poem::handler;
+use poem::web::Json;
+use poem::{error::NotFoundError, http::StatusCode, middleware::Tracing};
+use poem::{listener::TcpListener, get, EndpointExt, Response, Route, Server};
+use serde_json::json;
+use tracing_subscriber::EnvFilter;
+
+#[tokio::main]
+async fn main() -> Result<(), std::io::Error> {
+    if std::env::var_os("RUST_LOG").is_none() {
+        std::env::set_var("RUST_LOG", "poem=info");
+    }
+    //Setup logging & tracing
+    tracing_subscriber::fmt()
+        .json()
+        .with_env_filter(EnvFilter::from_default_env())
+        .init();
+
+    let app = Route::new()
+        .at("/helloworld", get(helloworld_handler))
+        .at("/versionz", get(versionz_handler))
+        .catch_error(|_err: NotFoundError| async move {
+            Response::builder()
+                .status(StatusCode::NOT_FOUND)
+                .body("not found")
+        })
+        .with(Tracing);
+
+    let port = std::env::var("PORT");
+    let port = match port {
+        Ok(port) => port,
+        Err(_) => "8080".to_string(),
+    };
+
+    Server::new(TcpListener::bind("0.0.0.0:".to_owned() + port.as_str()))
+        .name("code-challenge")
+        .run(app)
+        .await
+}
+
+
+#[handler]
+async fn helloworld_handler() -> String {
+    return "".to_string();
+}
+
+#[handler]
+async fn versionz_handler() -> Json<serde_json::Value> {
+    return Json(json!({}));
 }
