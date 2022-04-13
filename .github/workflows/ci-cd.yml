@@ -6,9 +6,6 @@ on:
 
 jobs:
   setup-build-publish-deploy:
-    permissions:
-      contents: 'read'
-      id-token: 'write'
     name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
     steps:
