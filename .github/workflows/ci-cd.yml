@@ -31,7 +31,7 @@ jobs:
       working-directory: "helm/code-challenge"
 
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      uses: hashicorp/setup-terraform@v2
 
     - name: Terraform Init
       run: terraform init
@@ -84,7 +84,7 @@ jobs:
           sudo mv kind /usr/local/bin/
 
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      uses: hashicorp/setup-terraform@v2
 
     - name: Create Kubernetes Cluster
       run: kind create cluster
