@@ -19,7 +19,7 @@ jobs:
         toolchain: stable
 
     - name: Rust Cache
-      uses: Swatinem/rust-cache@v1
+      uses: Swatinem/rust-cache@v2
 
     - name: Run Cargo Test
       run: make test
